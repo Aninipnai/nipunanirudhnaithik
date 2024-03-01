@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knowledge Quiz</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to right, #4caf50, #2196F3);
+      margin: 0;
+      padding: 0;
+      color: black;
+    }
+
+    #quiz-container {
+      max-width: 800px;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #quiz-title {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+
+    #quiz-subtitle {
+      font-size: 18px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .topic-button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #8156f8;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 18px;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .topic-button:hover {
+      background-color: #d49ee9;
+    }
+
+    .quiz-options {
+      list-style: none;
+      padding: 0;
+      text-align: center;
+    }
+
+    .quiz-option {
+      margin-bottom: 10px;
+    }
+
+    .quiz-option button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .quiz-option button:hover {
+      background-color: #333;
+    }
+
+    .result {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .reset-button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #ff6b08;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .reset-button:hover {
+      background-color: #45a049;
+    }
+
+    /* Additional styles for correct and incorrect options */
+
+    .quiz-option button.correct {
+      background-color: #4CAF50;
+    }
+
+    .quiz-option button.incorrect {
+      background-color: #FF0000;
+    }
+  </style>
+</head>
+<body>
+
+<div id="quiz-container">
+  <div id="quiz-title">Wanna Know Your Knowledge</div>
+  
+
+  <!-- Topic buttons -->
+  <button class="topic-button" onclick="startQuiz('Architecture')">Architecture</button>
+  <button class="topic-button" onclick="startQuiz('Painting')">Painting</button>
+  <button class="topic-button" onclick="startQuiz('Science')">Science</button>
+  <button class="topic-button" onclick="startQuiz('History')">History</button>
+  <button class="topic-button" onclick="startQuiz('Politics')">Politics</button>
+  <button class="topic-button" onclick="startQuiz('States and Capitals')">States and Capitals</button>
+  <button class="topic-button" onclick="startQuiz('Sports')">Sports</button>
+
+  <!-- Add more topics as needed -->
+
+  <button class="reset-button" onclick="resetQuiz()">Reset Quiz</button>
+</div>
+
+<script>
+  let currentQuestion = 0;
+  let score = 0;
+  let selectedTopic = '';
+
+  const quizData = {
+    'Architecture': [
+      { question: '1. What is the tallest building in the world?', options: ['Burj Khalifa', 'Shanghai Tower', 'One World Trade Center', 'Petronas Towers'], correctAnswer: 'Burj Khalifa' },
+      { question: '2. Which NYC landmark was the world\'s tallest building in 1940?', options: ['Trump Tower', 'Shanghai Tower', 'The Rockefeller Center', 'Empire State Building'], correctAnswer: 'Empire State Building' },
+      { question: '3. What\'s the name for an architectural drawing of a building\'s exterior?', options: ['Facade', 'Blueprint', 'Floor plan', 'Elevation'], correctAnswer: 'Elevation' },
+      { question: '4. Which American architect is considered the creator of the modern skyscraper?', options: ['Frank Lloyd Wright', 'Frank Gehry', 'Frank Sinatra', 'Louis Sullivan'], correctAnswer: 'Louis Sullivan' },
+      { question: '5. How tall is the Burj Khalifa, the world\'s tallest building?', options: ['1,567 feet', '3,870 feet', '1,896 feet', '2,722 feet'], correctAnswer: '2,722 feet' }
+    ],
+    'Painting': [
+      { question: '1. Who painted the Mona Lisa?', options: ['Vincent van Gogh', 'Leonardo da Vinci', 'Pablo Picasso', 'Claude Monet'], correctAnswer: 'Leonardo da Vinci' },
+      { question: '2. What sheen is ceiling paint typically?', options: ['semigloss', 'satin', 'eggshell', 'flat'], correctAnswer: 'flat' },
+      { question: '3. What does nap refer to in painting?', options: ['Surface texture', 'Brush strokes', 'Color intensity', 'Composition'], correctAnswer: 'Surface texture' },
+      { question: '4. Who created the painting "Starry Night"?', options: ['Pablo Picasso', 'Vincent van Gogh', 'Claude Monet', 'Leonardo da Vinci'], correctAnswer: 'Vincent van Gogh' },
+      { question: '5. Which art movement is known for its use of distorted and exaggerated figures?', options: ['Impressionism', 'Surrealism', 'Cubism', 'Abstract Expressionism'], correctAnswer: 'Surrealism' }
+    ],
+    'Science': [
+      { question: '1. what is the formula of water', options: ['Na2CO3', 'CO2', 'H2O', 'NaCl'], correctAnswer: 'H2O' },
+      { question: '2. which of the following is the unit of measurement of Force', options: ['watt', 'volt', 'newton', 'joules'], correctAnswer: 'newton' },
+      { question: '3. what is the atomic number of carbon', options: ['12', '65', '27', '6'], correctAnswer: '6' },
+      { question: '4. what is the Heisenberg uncertainty principle related to in quantum mechanics', options: ['speed and time', 'position and momentum', 'energy and frequency', 'mass and velocity'], correctAnswer: 'position and momentum' },
+      { question: '5. what organelle is known as "powerhouse" of the cell', options: ['endoplasmic reticulum', 'mitochondria', 'golgi apparatus', 'nucleus'], correctAnswer: 'mitochondria' }
+    ],
+    'History': [
+      { question: '1. who was the legendary founder of Rome according to Roman mythology', options: ['Jesus Christ', 'Augustus', 'Romulus', 'Hannibal'], correctAnswer: 'Romulus' },
+      { question: '2. who is considered as the architect of the Mauryan empire and is known for his political treaties Arthashastra?', options: ['Chanakya', 'Chandragupta', 'Harshavardhan', 'Ashoka'], correctAnswer: 'Chanakya' },
+      { question: '3. which Mughal emperor built Taj Mahal in the memory of his wife', options: ['Akbar', 'Birbal', 'Shahjahan', 'Babur'], correctAnswer: 'Shahjahan' },
+      { question: '4. who was the leader of the Indian National Army (INA) during World War II, which fought for Indian independence from British rule', options: ['Jawaharlal Nehru', 'Subash Chandra Bose', 'Rajiv Gandhi', 'Rajendra Prasad'], correctAnswer: 'Subash Chandra Bose' },
+      { question: '5. which prime minister is credited with introducing economic reforms in 1991 that liberalized the Indian economy', options: ['Rajiv Gandhi', 'Indira Gandhi', 'Nipun Singh', 'Manmohan Singh'], correctAnswer: 'Manmohan Singh' }
+    ],
+    'Politics': [
+      { question: '1. who is known as the father of the Indian Constitution', options: ['Jawaharlal Nehru', 'Sardar Patel', 'BR Ambedkar', 'Mahtma Gandhi'], correctAnswer: 'BR Ambedkar' },
+      { question: '2. what is the minimum voting age for participating in general elctions in India', options: ['18', '16', '21', '143'], correctAnswer: '18' },
+      { question: '3. how many members does the rajya sabha of the indian parliament have', options: ['545', '552', '20', '250'], correctAnswer: '250' },
+      { question: '4. Who is the first prime minister of India', options: ['Jawaharlal Nehru', 'Lal Bahadur Shastry', 'Indira Gandhi', 'Sardar Patel'], correctAnswer: 'Jawaharlal Nehru' },
+      { question: '5. who was the chief minister of telangana when the state was oficially formed in 2014', options: ['Kiran Kumar Reddy', 'K.Chandrashekar Rao', 'Y.S Jaganmohan Reddy', 'None of the Above'], correctAnswer: 'K.Chandrashekar Rao' }
+    ],
+    'States and Capitals': [
+      { question: '1. In How Many states and union territories is divided ', options: ['28,8', '29,7', '30,8', '31,6'], correctAnswer: '28,8' },
+      { question: '2. which state serves as the capital of India', options: ['Mumbai', 'Kolkata', 'Delhi', 'Chennai'], correctAnswer: 'Delhi' },
+      { question: '3. What is the capital of the southern state of Tamil Nadu', options: ['Chennai', 'West Bengal', 'Madurai', 'Jabalpur'], correctAnswer: 'Chennai' },
+      { question: '4. which city serves as the capital of Australia', options: ['Melbourne', 'Sydney', 'Canberra', 'Brisbane'], correctAnswer: 'Canberra' },
+      { question: '5. what is the capital city of Brazil', options: ['Rio De Janeiro', 'Sao Paulo', 'Salvador', 'Brazilia'], correctAnswer: 'Rio De Janeiro' }
+    ],
+    'Sports': [
+      { question: '1. who is best fielder in the world according to 1993 survey', options: ['Jonty Rhodes', 'Ravindra Jadeja', 'AB de Villiers', 'M.S Dhoni'], correctAnswer: 'Jonty Rhodes' },
+      { question: '2. In which year did India host the FIFA U-17 world cup ', options: ['2014', '2017', '2019', '2022'], correctAnswer: '2017' },
+      { question: '3. who is the first Indian badmiton player win an olympic silver medal ', options: ['P.V Sindhu', 'Saina Nehwal', 'Mahatma Gandhi', 'Pullela Gopchand'], correctAnswer: 'P.V Sindhu' },
+      { question: '4. In a King and Pawn vs King endgame,what is the the minimum number of moves required to checkmate the oppsoing king', options: ['one', 'two', 'three', 'four'], correctAnswer: 'two' },
+      { question: '5. what game is a sensation in mobile e-sports in India before it was banned in 2020,leading to the emergence of alternatives like Free Fire and Call of Duty Mobile', options: ['PUBG Mobile', 'Fortnite Mobile', 'Minecraft', 'Clash of Clans'], correctAnswer: 'PUBG Mobile' }
+     
+    ],
+  };
+  function startQuiz(topic) {
+    selectedTopic = topic;
+    currentQuestion = 0;
+    score = 0;
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    const questionElement = document.getElementById("quiz-title");
+    const optionsElement = document.getElementById("quiz-subtitle");
+    const topicQuestions = quizData[selectedTopic];
+
+    if (currentQuestion < topicQuestions.length) {
+      const currentQuiz = topicQuestions[currentQuestion];
+      questionElement.innerText = currentQuiz.question;
+
+      // Shuffle answer options
+      shuffleArray(currentQuiz.options);
+
+      // Display options
+      optionsElement.innerHTML = '';
+      currentQuiz.options.forEach((option, index) => {
+        const optionElement = document.createElement("li");
+        optionElement.className = "quiz-option";
+        optionElement.innerHTML = `<button onclick="selectOption('${option}', ${index})">${option}</button>`;
+        optionsElement.appendChild(optionElement);
+      });
+    } else {
+      showResult();
+    }
+  }
+
+  function selectOption(selectedOption, index) {
+    const currentQuiz = quizData[selectedTopic][currentQuestion];
+    const options = document.querySelectorAll('.quiz-option button');
+
+    if (selectedOption === currentQuiz.correctAnswer) {
+      options[index].classList.add('correct');
+      score++;
+    } else {
+      options[index].classList.add('incorrect');
+      // Highlight the correct option
+      options[currentQuiz.options.indexOf(currentQuiz.correctAnswer)].classList.add('correct');
+    }
+
+    currentQuestion++;
+    setTimeout(() => {
+      loadQuestion();
+      // Remove highlighting for the next question
+      options.forEach(option => {
+        option.classList.remove('correct', 'incorrect');
+      });
+    }, 1000);
+  }
+
+  function showResult() {
+    const quizContainer = document.getElementById("quiz-container");
+    quizContainer.innerHTML = `<div id="quiz-title">Quiz Completed!</div>
+                               <div id="quiz-subtitle">Your score is ${score}/${quizData[selectedTopic].length}.</div>`;
+    setTimeout(() => {
+      resetQuiz();
+    }, 5000);
+  }
+
+  function resetQuiz() {
+    selectedTopic = '';
+    currentQuestion = 0;
+    score = 0;
+    loadHomePage();
+  }
+
+  function loadHomePage() {
+    const quizContainer = document.getElementById("quiz-container");
+    quizContainer.innerHTML = `<div id="quiz-title">Wanna Know Your Knowledge</div>
+                               <div id="quiz-subtitle">Created by Anirudh.V</div>
+                               <button class="topic-button" onclick="startQuiz('Architecture')">Architecture</button>
+                               <button class="topic-button" onclick="startQuiz('Painting')">Painting</button>
+                               <button class="topic-button" onclick="startQuiz('Science')">Science</button>
+                               <button class="topic-button" onclick="startQuiz('History')">History</button>
+                               <button class="topic-button" onclick="startQuiz('Politics')">Politics</button>
+                               <button class="topic-button" onclick="startQuiz('States and Capitals')">States and Capitals</button>
+                               <button class="topic-button" onclick="startQuiz('Sports')">Sports</button>
+                               <button class="reset-button" onclick="resetQuiz()">Reset Quiz</button>`;
+  }
+
+  function shuffleArray(array) {
+    // Fisher-Yates shuffle algorithm
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+</script>
+
+</body>
+</html>
